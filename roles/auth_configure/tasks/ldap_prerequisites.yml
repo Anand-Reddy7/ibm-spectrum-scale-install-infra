@@ -1,17 +1,18 @@
 ---
-# Installing required LDAP client packages for integration.
+- name: Upgrade SSSD packages
+  hosts: localhost
+  tasks:
 
-- name: LDAP | Check OS version for OpenLDAP package installation
-  ansible.builtin.shell: "grep -oE 'release [0-9]+' /etc/redhat-release | awk '{print $2}'"
-  register: rhel_version
-  changed_when: false
+    - name: LDAP | Check OS version for OpenLDAP package installation
+      ansible.builtin.shell: "grep -oE 'release [0-9]+' /etc/redhat-release | awk '{print $2}'"
+      register: rhel_version
+      changed_when: false
 
-- block:
-    - name: Upgrade sssd-tools and python3-sssdconfig to the latest version
+    - name: Upgrade sssd-tools and python3-sssdconfig to the latest version with --nobest
       ansible.builtin.command:
-        cmd: "dnf update -y sssd-tools python3-sssdconfig --allowerasing"
+        cmd: "dnf update -y --nobest sssd-tools python3-sssdconfig"
 
-    - name: LDAP | Install required OpenLDAP packages
+    - name: LDAP | Install Required OpenLDAP Packages
       ansible.builtin.dnf:
         name:
           - libnsl
@@ -23,4 +24,4 @@
           - openssl-perl
           - authselect
         state: present
-  when: rhel_version.stdout in ['8', '9']
+      when: rhel_version.stdout in ['8', '9']
