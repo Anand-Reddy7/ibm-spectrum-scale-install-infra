@@ -7,12 +7,9 @@
   changed_when: false
 
 - block:
-    - name: LDAP | Remove conflicting SSSD packages
-      ansible.builtin.package:
-        name:
-          - sssd-tools
-          - python3-sssdconfig
-        state: absent
+    - name: Upgrade sssd-tools and python3-sssdconfig to the latest version
+      ansible.builtin.command:
+        cmd: "dnf update -y sssd-tools python3-sssdconfig --allowerasing"
 
     - name: LDAP | Install required OpenLDAP packages
       ansible.builtin.dnf:
@@ -25,12 +22,5 @@
           - oddjob-mkhomedir
           - openssl-perl
           - authselect
-        state: present
-
-    - name: LDAP | Install conflicting SSSD packages separately
-      ansible.builtin.package:
-        name:
-          - sssd-tools
-          - python3-sssdconfig
         state: present
   when: rhel_version.stdout in ['8', '9']
