@@ -25,11 +25,6 @@
           - oddjob-mkhomedir
           - openssl-perl
           - authselect
-        state: present
-
-    - name: LDAP | Install conflicting SSSD packages separately
-      ansible.builtin.package:
-        name:
           - sssd-tools
           - python3-sssdconfig
         state: present
